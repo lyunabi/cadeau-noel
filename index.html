@@ -218,6 +218,33 @@
             font-size: 1.5rem;
         }
 
+        /* Bouton de téléchargement */
+        .download-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: #761313;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid #5a0d0d;
+            box-shadow: 0 5px 20px rgba(118, 19, 19, 0.4);
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: #5a0d0d;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(118, 19, 19, 0.6);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
         /* Particules qui explosent */
         .particle {
             position: fixed;
@@ -410,6 +437,9 @@
                 <strong>Parce que tu es la plus belle chose qui me soit arrivée ❤️</strong><br>
                 Joyeux Noël ma chérie d'amour !!
             </div>
+            <a href="image.JPG" download="cadeau-emma.jpg" class="download-btn">
+                📥 Télécharger le dessin
+            </a>
         </div>
     </div>
 
