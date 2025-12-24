@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un cadeau pour toi 🎄</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #dce0e8;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        /* Curseur personnalisé */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s;
+        }
+
+        .custom-cursor.clicking {
+            transform: scale(1.5);
+            background: rgba(185, 20, 20, 0.887);
+        }
+
+        /* Neige animée */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: #fff;
+            font-size: 1em;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Container principal */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        /* Message initial */
+        .message-initial {
+            text-align: center;
+            color: #761313;
+            animation: fadeIn 2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-initial h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #27363F;
+        }
+
+        .message-initial p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #761313;
+        }
+
+        /* Cadeau SVG */
+        .gift-box {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
+        }
+
+        .gift-box:hover {
+            transform: scale(1.1) rotate(-3deg);
+            filter: drop-shadow(0 25px 60px rgba(139, 0, 0, 0.5));
+        }
+
+        .gift-box svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .gift-box.opening .lid-group {
+            animation: openLid 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes openLid {
+            0% {
+                transform: rotateX(0deg);
+                opacity: 1;
+            }
+            70% {
+                transform: rotateX(-100deg) translateY(-50px);
+                opacity: 0.5;
+            }
+            100% {
+                transform: rotateX(-140deg) translateY(-80px);
+                opacity: 0;
+            }
+        }
+
+        .gift-box:hover .sparkle-circle {
+            animation: sparkleAnim 1s infinite;
+        }
+
+        @keyframes sparkleAnim {
+            0%, 100% {
+                opacity: 0;
+                r: 2;
+            }
+            50% {
+                opacity: 1;
+                r: 4;
+            }
+        }
+
+        /* Contenu révélé */
+        .revealed-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .revealed-content.show {
+            animation: revealContent 1.5s forwards;
+            animation-delay: 0.8s;
+            pointer-events: auto;
+        }
+
+        @keyframes revealContent {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .drawing-frame {
+            background: #1a1a2e;
+            padding: 30px;
+            border: 5px solid #761313;
+            border-radius: 10px;
+            box-shadow: 0 0 40px rgba(255, 107, 107, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .drawing-placeholder {
+            width: 100%;
+            height: 400px;
+            background: #fff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #666;
+            font-style: italic;
+            overflow: hidden;
+        }
+
+        .drawing-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .love-message {
+            color: #27363F;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .love-message strong {
+            color: #a51f1f;
+            font-size: 1.5rem;
+        }
+
+        /* Particules qui explosent */
+        .particle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: explode 1s forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Titre simple et élégant */
+        .message-initial h1 {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+    
+    <div class="container">
+        <div class="message-initial" id="messageInitial">
+            <h1>Joyeux Noël mon amour <3 </h1>
+            <p>Clique sur le cadeau pour découvrir ta surprise !!</p>
+            
+            <div class="gift-box" id="giftBox">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Gradients pour la boîte -->
+                        <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#c41e3a;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#8b0000;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#5a0000;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Gradient pour le couvercle -->
+                        <linearGradient id="lidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#d4243c;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#a01d30;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#7a1525;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Gradient pour les rubans -->
+                        <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#d4af37;stop-opacity:1" />
+                            <stop offset="30%" style="stop-color:#ffd700;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ffed4e;stop-opacity:1" />
+                            <stop offset="70%" style="stop-color:#ffd700;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#d4af37;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Ombres -->
+                        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                            <feOffset dx="0" dy="4" result="offsetblur"/>
+                            <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.5"/>
+                            </feComponentTransfer>
+                            <feMerge>
+                                <feMergeNode/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Boîte principale -->
+                    <g filter="url(#shadow)">
+                        <rect x="40" y="120" width="220" height="160"
+                              fill="url(#boxGrad)"
+                              stroke="#2a0000"
+                              stroke-width="4"
+                              rx="3"/>
+
+                        <!-- Ruban vertical sur boîte -->
+                        <rect x="135" y="120" width="30" height="160"
+                              fill="url(#ribbonGrad)"/>
+                        <line x1="145" y1="120" x2="145" y2="280"
+                              stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
+                        <line x1="155" y1="120" x2="155" y2="280"
+                              stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                    </g>
+                    
+                    <!-- Couvercle (groupe animé) -->
+                    <g class="lid-group" style="transform-origin: 150px 120px;">
+                        <rect x="30" y="50" width="240" height="70"
+                              fill="url(#lidGrad)"
+                              stroke="#2a0000"
+                              stroke-width="4"
+                              rx="3"
+                              filter="url(#shadow)"/>
+
+                        <!-- Ruban horizontal sur couvercle -->
+                        <rect x="30" y="75" width="240" height="30"
+                              fill="url(#ribbonGrad)"/>
+                        <line x1="30" y1="85" x2="270" y2="85"
+                              stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
+                        <line x1="30" y1="95" x2="270" y2="95"
+                              stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        
+                        <!-- Noeud -->
+                        <g transform="translate(150, 20)">
+                            <!-- Boucle gauche -->
+                            <ellipse cx="-25" cy="15" rx="22" ry="28" 
+                                     fill="url(#ribbonGrad)" 
+                                     transform="rotate(-45 -25 15)"
+                                     filter="url(#shadow)"/>
+                            <ellipse cx="-20" cy="12" rx="10" ry="15" 
+                                     fill="white" 
+                                     opacity="0.3"
+                                     transform="rotate(-45 -20 12)"/>
+                            
+                            <!-- Boucle droite -->
+                            <ellipse cx="25" cy="15" rx="22" ry="28" 
+                                     fill="url(#ribbonGrad)" 
+                                     transform="rotate(45 25 15)"
+                                     filter="url(#shadow)"/>
+                            <ellipse cx="20" cy="12" rx="10" ry="15" 
+                                     fill="white" 
+                                     opacity="0.3"
+                                     transform="rotate(45 20 12)"/>
+                            
+                            <!-- Centre du noeud -->
+                            <circle cx="0" cy="15" r="12" 
+                                    fill="url(#ribbonGrad)" 
+                                    filter="url(#shadow)"/>
+                            <circle cx="-3" cy="12" r="6" 
+                                    fill="white" 
+                                    opacity="0.4"/>
+                            
+                            <!-- Rubans qui tombent -->
+                            <path d="M -8 25 L -12 60 L -8 70 L -4 60 Z" 
+                                  fill="url(#ribbonGrad)" 
+                                  filter="url(#shadow)"/>
+                            <path d="M 8 25 L 12 60 L 8 70 L 4 60 Z" 
+                                  fill="url(#ribbonGrad)" 
+                                  filter="url(#shadow)"/>
+                        </g>
+                    </g>
+                    
+                    <!-- Paillettes -->
+                    <circle class="sparkle-circle" cx="80" cy="180" r="2" fill="white" opacity="0">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle class="sparkle-circle" cx="220" cy="160" r="2" fill="white" opacity="0">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" begin="0.3s"/>
+                    </circle>
+                    <circle class="sparkle-circle" cx="150" cy="240" r="2" fill="white" opacity="0">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite" begin="0.6s"/>
+                    </circle>
+                    <circle class="sparkle-circle" cx="200" cy="220" r="2" fill="white" opacity="0">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.3s" repeatCount="indefinite" begin="0.9s"/>
+                    </circle>
+                </svg>
+            </div>
+        </div>
+
+        <div class="revealed-content" id="revealedContent">
+            <div class="drawing-frame">
+                <div class="drawing-placeholder">
+                    <img src="image.JPG">
+                </div>
+            </div>
+            <div class="love-message">
+                Le père Noël a une fois de plus pensé à toi cette année :) <br>
+                <strong>Parce que tu es la plus belle chose qui me soit arrivée ❤️</strong><br>
+                Joyeux Noël ma chérie d'amour !!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Curseur personnalisé
+        const cursor = document.querySelector('.custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mousedown', () => {
+            cursor.classList.add('clicking');
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursor.classList.remove('clicking');
+        });
+
+        // Créer des flocons de neige
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + '%';
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+            snowflake.style.opacity = Math.random();
+            snowflake.style.fontSize = Math.random() * 1 + 0.5 + 'em';
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 5000);
+        }
+
+        setInterval(createSnowflake, 200);
+
+        // Créer des particules d'explosion
+        function createParticles(x, y) {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                const angle = (Math.PI * 2 * i) / 30;
+                const velocity = 100 + Math.random() * 100;
+                const xVel = Math.cos(angle) * velocity;
+                const yVel = Math.sin(angle) * velocity;
+                
+                particle.style.setProperty('--x', xVel + 'px');
+                particle.style.setProperty('--y', yVel + 'px');
+                
+                const colors = ['#ff6b6b', '#ffd700', '#00fff9', '#ff00c1', '#fff'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        // Ouverture du cadeau
+        const giftBox = document.getElementById('giftBox');
+        const messageInitial = document.getElementById('messageInitial');
+        const revealedContent = document.getElementById('revealedContent');
+
+        giftBox.addEventListener('click', function(e) {
+            const rect = giftBox.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            
+            createParticles(x, y);
+            
+            giftBox.classList.add('opening');
+            
+            setTimeout(() => {
+                messageInitial.style.display = 'none';
+                revealedContent.classList.add('show');
+            }, 1000);
+        });
+
+        // Sons de clics (simulation visuelle)
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.style.position = 'fixed';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            ripple.style.width = '5px';
+            ripple.style.height = '5px';
+            ripple.style.background = '#ff6b6b';
+            ripple.style.borderRadius = '50%';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.animation = 'explode 0.5s forwards';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+        });
+    </script>
+</body>
+</html>
